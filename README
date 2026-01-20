@@ -1,0 +1,30 @@
+# Thermal Camera Monitor
+Raspberry Pi based thermal monitoring system with a web-based dashboard.
+
+## Installation
+0. Create pyton env: python3 -m venv opencv
+1. Install dependencies: `pip install flask numpy<2 opencv=4.6.*`
+2. Setup camera quirks:
+	sudo nano /etc/modprobe.d/uvcvideo.conf
+        options uvcvideo quirks=0x2
+2. Set up the service: `sudo cp thermal.service /etc/systemd/system/`
+at /etc/systemd/system/thermal.service 
+[Unit]
+Description=Thermal Camera Monitor Service
+After=network.target
+
+[Service]
+# Adjust these paths to match your actual setup
+User=vadim
+WorkingDirectory=/home/vadim/opencv
+ExecStart=/home/vadim/opencv/bin/python3 /home/vadim/opencv/flask_ui.py
+Restart=always
+RestartSec=10
+StandardOutput=null
+StandardError=inherit
+
+[Install]
+WantedBy=multi-user.target
+
+3. Enable startup: `sudo systemctl enable thermal.service`
+4. sudo systemctl start thermal.service
